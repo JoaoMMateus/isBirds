@@ -6,9 +6,6 @@ from pathlib import Path
 from PIL import Image
 import ipywidgets as widgets
 
-#image = Path(__file__).parent / 'img_b.jpg'
-#image = Path(__file__).parent / 'img_f.jpg'
-
 # Load the saved learner
 learn = load_learner('bird_classifier.pkl')
 
@@ -20,11 +17,6 @@ learn = load_learner('bird_classifier.pkl')
 btn_upload = widgets.FileUpload()
 btn_upload = SimpleNamespace(data = ['img_f.jpg'])
 img = PILImage.create(btn_upload.data[-1])
-
-# out_pl = widgets.Output()
-# out_pl.clear_output()
-# with out_pl: display(img.to_thumb(128,128))
-# out_pl
 
 pred, pred_idx, probs = learn.predict(img)
 
