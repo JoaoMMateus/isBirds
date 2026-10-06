@@ -1,3 +1,10 @@
+### Python.gitignore
+
+# custom additions to the default Python.gitignore template
+imgs/
+img_b.jpg
+img_f.jpg
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
