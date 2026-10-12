@@ -5,3 +5,4 @@ torchvision==0.25.0
 ddgs==9.16.0
 ipywidgets==7.8.5
 voila==0.5.13
+gradio==6.29.1

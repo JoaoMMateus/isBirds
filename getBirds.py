@@ -2,31 +2,38 @@ from ddgs import DDGS
 from fastcore.all import *
 from fastai.vision.all import *
 from fastdownload import download_url
+import gradio as gr
 from pathlib import Path
-from PIL import Image
+
+import gradio as gr
+from fastai.vision.all import load_learner, PILImage
+
+# Set to True or False to skip or not the downloading of images
+skip_download = True
 
 searches = 'forest', 'birds', 'cats', 'dogs'
 path = Path('imgs')
 
-for o in searches:
-    dest = (path/o)
-    dest.mkdir(exist_ok=True, parents=True)
-    urls = DDGS().images(
-        query=f"{o} photos",
-        region="us-en",
-        safesearch="on",
-        max_results=5,
-        page=1,
-        backend="auto",
-        size=None,
-        color="color",
-        type_image="photo",
-        layout="square",
-        license_image="Public",
-    )
-    for u in urls:
-        print(u['title'])
-        download_url(u['image'], dest, show_progress=False)
+if not skip_download:
+    for o in searches:
+        dest = (path/o)
+        dest.mkdir(exist_ok=True, parents=True)
+        urls = DDGS().images(
+            query=f"{o} photos",
+            region="us-en",
+            safesearch="on",
+            max_results=5,
+            page=1,
+            backend="auto",
+            size=None,
+            color="color",
+            type_image="photo",
+            layout="square",
+            license_image="Public",
+        )
+        for u in urls:
+            print(u['title'])
+            download_url(u['image'], dest, show_progress=False)
 
 dls = DataBlock(
     blocks=(ImageBlock, CategoryBlock), 
@@ -37,10 +44,10 @@ dls = DataBlock(
 ).dataloaders(path, bs=2, num_workers=0)
 
 learn = vision_learner(dls, resnet18, metrics=error_rate)
-learn.fine_tune(3)
+learn.fine_tune(5)
+
+interp = ClassificationInterpretation.from_learner(learn)
+interp.plot_confusion_matrix()
+interp.plot_top_losses(5, nrows=1)
 
 learn.export('bird_classifier.pkl')
-
-learn_inf = load_learner('bird_classifier.pkl')
-learn_inf.predict('img_b.jpg')
-learn_inf.dls.vocab
